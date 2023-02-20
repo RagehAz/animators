@@ -3,18 +3,26 @@ description: A Collection of Animation Helpers and Animating Widgets
 version: 0.0.1
 publish_to: "none"
 homepage: https://github.com/RagehAz/animators.git
-
+  # ------------------------------------
 environment:
   sdk: ">=2.10.5 <3.0.0"
   flutter: ">=1.17.0"
-
+  # ------------------------------------
 dependencies:
   flutter:
     sdk: flutter
-
+  # ------------------------------------
+  filers:
+    git:
+      url: https://github.com/RagehAz/filers.git
+  numeric:
+    git:
+      url: https://github.com/RagehAz/numeric.git
+  # ------------------------------------
 dev_dependencies:
   flutter_test:
     sdk: flutter
   lint: ^1.0.0
-
+  # ------------------------------------
 flutter:
+  # ------------------------------------

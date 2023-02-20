@@ -1,6 +1,9 @@
 library animators;
 // -----------------------------------------------------------------------------
+import 'package:filers/filers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:numeric/numeric.dart';
 // -----------------------------------------------------------------------------
 part 'src/helpers/animators.dart';
 part 'src/helpers/sliders.dart';

@@ -16,21 +16,23 @@ class Sliders {
   /// SLIDE TO
 
   // --------------------
+  ///
   static Future<int> slideToNextAndGetNewIndex({
-    @required PageController slidingController,
+    @required PageController pageController,
     @required int numberOfSlides,
     @required int currentSlide,
     Duration duration = const Duration(milliseconds: 200),
     Curve curve = Curves.easeInOutCirc,
   }) async {
 
-    if (currentSlide + 1 == numberOfSlides) {
+    if ((currentSlide + 1 == numberOfSlides) || pageController == null) {
       // blog('Can not slide forward');
       return currentSlide;
     }
+
     else {
 
-      await slidingController.animateToPage(currentSlide + 1,
+      await pageController.animateToPage(currentSlide + 1,
           duration: duration,
           curve: curve
       );
@@ -39,6 +41,7 @@ class Sliders {
     }
   }
   // --------------------
+  ///
   static Future<int> slideToBackAndGetNewIndex({
     @required PageController pageController,
     @required int currentSlide,
@@ -49,7 +52,7 @@ class Sliders {
     /// this checks if its the first slide, it won't change index and won't slide, otherwise
     /// will slide back and return decreased index
 
-    if (currentSlide == 0) {
+    if (currentSlide == 0 || pageController == null) {
       // blog('can not slide back');
       return currentSlide;
     }
@@ -63,8 +66,10 @@ class Sliders {
 
       return currentSlide - 1;
     }
+
   }
   // --------------------
+  ///
   static Future<void> slideToNext({
     @required PageController pageController,
     @required int numberOfSlides,
@@ -73,13 +78,16 @@ class Sliders {
     Curve curve = Curves.easeInOutCirc,
   }) async {
 
-    await pageController.animateToPage(currentSlide + 1,
-      duration: duration,
-      curve: curve,
-    );
-
+    if (pageController != null) {
+      await pageController.animateToPage(
+        currentSlide + 1,
+        duration: duration,
+        curve: curve,
+      );
+    }
   }
   // --------------------
+  ///
   static Future<void> slideToBackFrom({
     @required PageController pageController,
     @required int currentSlide,
@@ -87,7 +95,7 @@ class Sliders {
     Curve curve = Curves.easeInOutCirc,
   }) async {
 
-    if (currentSlide == 0) {
+    if (currentSlide == 0 || pageController == null) {
       // blog('can not slide back');
     }
 
@@ -165,10 +173,11 @@ class Sliders {
     @required int currentSlide
   }) {
 
-    pageController.jumpToPage(
-      currentSlide,
-    );
-
+    if (pageController != null) {
+      pageController.jumpToPage(
+        currentSlide,
+      );
+    }
   }
   // -----------------------------------------------------------------------------
 
@@ -231,4 +240,278 @@ class Sliders {
 
   }
   // -----------------------------------------------------------------------------
+
+  /// FUCK YOU
+
+  // --------------------
+  /*
+  static ScrollPhysics superScroller({
+    @required bool trigger,
+  }) {
+    return trigger == true ?
+    const BouncingScrollPhysics()
+        :
+    const NeverScrollableScrollPhysics();
+  }
+   */
+  // -----------------------------------------------------------------------------
+
+  /// CHECKERS
+
+  // --------------------
+  ///
+  static bool checkIsAtTop(ScrollController scrollController) {
+    if (scrollController == null) {
+      return false;
+    } else {
+      return scrollController?.offset == scrollController?.position?.minScrollExtent;
+    }
+  }
+
+  // --------------------
+  ///
+  static bool checkIsAtBottom(ScrollController scrollController) {
+    if (scrollController == null){
+      return false;
+    }
+    else {
+      return scrollController?.offset == scrollController?.position?.maxScrollExtent;
+    }
+  }
+  // --------------------
+  ///
+  static bool checkIsGoingDown(ScrollController scrollController) {
+    bool _goingDown;
+
+    if (scrollController != null) {
+      if (scrollController.position != null) {
+        _goingDown = scrollController.position.userScrollDirection ==
+            ScrollDirection.forward;
+      }
+    }
+
+    return _goingDown;
+  }
+  // --------------------
+  ///
+  static bool checkIsGoingUp(ScrollController scrollController) {
+    return scrollController?.position?.userScrollDirection == ScrollDirection.reverse;
+  }
+  // --------------------
+  ///
+  static bool checkIsAtPercentFromTop({
+    @required ScrollController scrollController,
+    @required double percent,
+    @required double maxHeight,
+  }) {
+    bool _output = false;
+
+    if (scrollController != null) {
+      final double _min = scrollController.position.minScrollExtent;
+      final double _max = maxHeight; //scrollController.position.maxScrollExtent;
+      final double _fraction = percent / 100;
+      _output = scrollController.offset <= (_min + (_max * _fraction));
+    }
+    return _output;
+  }
+  // --------------------
+  ///
+  static bool checkCanSlide({
+    @required ScrollUpdateNotification details,
+    @required double boxDistance,
+    @required bool goesBackOnly,
+    @required Axis axis,
+    int numberOfBoxes = 2,
+    double slideLimitRatio = 0.2,
+  }) {
+
+    if (details == null) {
+      return false;
+    }
+
+    else {
+      final double _offset = details.metrics.pixels;
+      final double _limitRatio = slideLimitRatio;
+      final double _backLimit = boxDistance * _limitRatio * (-1);
+      final double _nextLimit = (boxDistance * (numberOfBoxes - 1)) + (_backLimit * (-1));
+
+      if (details.metrics.axis != axis) {
+        return false;
+      }
+
+      else if (goesBackOnly == true) {
+        return _offset < _backLimit;
+      }
+
+      else {
+        return _offset < _backLimit || _offset > _nextLimit;
+      }
+
+    }
+
+  }
+  // -----------------------------------------------------------------------------
+
+  /// SCROLL TO
+
+  // --------------------
+  ///
+  static Future<void> scrollTo({
+    @required ScrollController controller,
+    @required double offset,
+    Duration duration = const Duration(milliseconds: 500),
+    Curve curve = Curves.easeInOutCirc,
+  }) async {
+
+    if (controller != null) {
+      // if (controller.positions.isEmpty == true){
+      await controller.animateTo(
+        offset,
+        duration: duration,
+        curve: curve,
+      );
+      // }
+    }
+
+  }
+  // -----------------------------------------------------------------------------
+  /// TESTED : WORKS PERFECT
+  static Future<void> scrollToEnd({
+    @required ScrollController controller,
+    Duration duration = const Duration(milliseconds: 500),
+    Curve curve = Curves.easeInOutCirc,
+  }) async {
+    if (controller != null) {
+      await controller.animateTo(
+        controller.position.maxScrollExtent,
+        duration: duration,
+        curve: curve,
+      );
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  /// TESTED : WORKS PERFECT
+  static Future<void> scrollToTop({
+    @required ScrollController controller,
+    Duration duration = const Duration(milliseconds: 500),
+    Curve curve = Curves.easeInOutCirc,
+  }) async {
+
+    await controller.animateTo(controller.position.minScrollExtent,
+      duration: duration,
+      curve: curve,
+    );
+
+  }
+  // -----------------------------------------------------------------------------
+
+  /// BLOGGING
+
+  // --------------------
+  /// TESTED : WORKS PERFECT
+  static void blogScrolling({
+    @required ScrollController scrollController,
+    @required double paginationHeight,
+    @required bool isPaginating,
+    @required bool canKeepReading,
+  }) {
+
+    final double max = scrollController.position.maxScrollExtent;
+    final double current = scrollController.position.pixels;
+
+    final bool _canPaginate = canPaginate(
+      scrollController: scrollController,
+      paginationHeight: paginationHeight,
+      isPaginating: isPaginating,
+      canKeepReading: canKeepReading,
+    );
+
+    final double _max = Numeric.roundFractions(max, 1);
+    final double _current = Numeric.roundFractions(current, 1);
+    final double _diff = Numeric.roundFractions(max-current, 1);
+    blog('SHOULD LOAD : (max $_max - current $_current) = $_diff : canPaginate $_canPaginate');
+
+  }
+  // -----------------------------------------------------------------------------
+
+  /// PAGINATION
+
+  // --------------------
+  /// TESTED : WORKS PERFECT
+  static bool canPaginate({
+    @required ScrollController scrollController,
+    @required double paginationHeight,
+    @required bool isPaginating,
+    @required bool canKeepReading,
+  }){
+
+    if (isPaginating == true || scrollController == null){
+      return false;
+    }
+    else if (canKeepReading == false){
+      return false;
+    }
+    else {
+
+      final double max = scrollController.position.maxScrollExtent;
+      final double current = scrollController.position.pixels;
+
+      return max - current <= paginationHeight;
+
+    }
+
+  }
+  // --------------------
+  /// TESTED : WORKS PERFECT
+  static void createPaginationListener({
+    @required ScrollController controller,
+    @required ValueNotifier<bool> isPaginating,
+    @required ValueNotifier<bool> canKeepReading,
+    @required Function onPaginate,
+    @required bool mounted,
+  }){
+
+    if (controller != null){
+
+      controller.addListener(() async {
+
+      final bool _canPaginate = Sliders.canPaginate(
+        scrollController: controller,
+        isPaginating: isPaginating.value,
+        canKeepReading: canKeepReading.value,
+        paginationHeight: 100,
+      );
+
+      // Scrollers.blogScrolling(
+      //   scrollController: controller,
+      //   isPaginating: isPaginating.value,
+      //   canKeepReading: canKeepReading.value,
+      //   paginationHeight: 0,
+      // );
+
+      if (_canPaginate == true){
+
+        setNotifier(
+            notifier: isPaginating,
+            mounted: mounted,
+            value: true,
+        );
+
+        await onPaginate();
+
+        setNotifier(
+          notifier: isPaginating,
+          mounted: mounted,
+          value: false,
+        );
+
+      }
+
+    });
+
+    }
+
+  }
+// -----------------------------------------------------------------------------
 }
