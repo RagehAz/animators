@@ -10,26 +10,24 @@ class Animators {
   /// SWIPE DIRECTION
 
   // --------------------
+  /// AI TESTED
   static SwipeDirection getSwipeDirection({
-    @required int oldIndex,
-    @required int newIndex
+  @required int oldIndex,
+  @required int newIndex
   }) {
-    SwipeDirection _swipeDirection;
 
-    if (newIndex > oldIndex) {
-      _swipeDirection = SwipeDirection.next;
-    }
-
-    else if (newIndex < oldIndex) {
-      _swipeDirection = SwipeDirection.back;
+    if (oldIndex == null || newIndex == null) {
+      return SwipeDirection.freeze;
     }
 
     else {
-      _swipeDirection = SwipeDirection.freeze;
+      switch (newIndex?.compareTo(oldIndex)) {
+        case 1:return SwipeDirection.next;
+        case -1:return SwipeDirection.back;
+        default:return SwipeDirection.freeze;
+      }
     }
 
-    // print('getSwipeDirection concluded going from [ old index ($oldIndex) ] to [ new index ($newIndex) ] is [$_swipeDirection]');
-    return _swipeDirection;
   }
   // -----------------------------------------------------------------------------
 
@@ -56,6 +54,7 @@ class Animators {
   /// Animation<double>
 
   // --------------------
+  /// TESTED : WORKS PERFECT
   static Animation<double> animateDouble({
     @required double begin,
     @required double end,
@@ -64,14 +63,20 @@ class Animators {
     Cubic reverseCurve = Curves.easeIn,
   }) {
 
-    return Tween<double>(
-      begin: begin,
-      end: end,
-    ).animate(CurvedAnimation(
-      parent: controller,
-      curve: curve,
-      reverseCurve: reverseCurve,
-    ));
+    if (begin == null || end == null || controller == null){
+      return null;
+    }
+
+    else {
+      return Tween<double>(
+        begin: begin,
+        end: end,
+      ).animate(CurvedAnimation(
+        parent: controller,
+        curve: curve,
+        reverseCurve: reverseCurve,
+      ));
+    }
 
     /// can do stuff here
     //   ..addListener(() {
@@ -93,7 +98,7 @@ class Animators {
   /// TWEEN MODS
 
   // --------------------
-  /// TESTED : WORKS PERFECT
+  /// AI TESTED
   static double limitTweenImpact({
     @required double maxDouble,
     @required double minDouble,
@@ -114,7 +119,12 @@ class Animators {
     @required double tweenValue,
   }){
 
-    return 1 - tweenValue;
+    if (tweenValue == null){
+      return tweenValue;
+    }
+    else {
+      return 1 - tweenValue;
+    }
 
   }
   // --------------------
